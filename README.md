@@ -1,16 +1,16 @@
-# ETP_v1_1 Library
+# ETP_v1_1 library
 
 ## Overview
 
-The ETP_v1_1.js Library can be added to your ClearBlade System to provide an easy interface to an ETP Server running v1.1. This libray currently supports Discovery, Streaming Data, Creating and Writing DataObjects to the store.
+The ETP_v1_1.js library can be added to your ClearBlade system to provide an easy interface to an ETP server running v1.1. This library currently supports discovery, streaming data, creating, and writing data objects to the store.
 
 ## Prerequisite
 
-Currently this library expects a few existing Collections in your System, see below for their names and required data structures.
+Currently, this library expects a few existing system collections. See below for their names and required data structures.
 
 ### etp_v1_1_logs
 
-| Column Name          | Column Type | Index   | Unique Index |
+| Column name          | Column type | Index   | Unique index |
 | -------------------- | ----------- | ------- | ------------ |
 | uid                  | string      |         |              |
 | uri                  | string      | &check; | &check;      |
@@ -26,7 +26,7 @@ Currently this library expects a few existing Collections in your System, see be
 
 ### etp_v1_1_wellbores
 
-| Column Name          | Column Type | Index   | Unique Index |
+| Column name          | Column type | Index   | Unique index |
 | -------------------- | ----------- | ------- | ------------ |
 | uid                  | string      |         |              |
 | uri                  | string      | &check; | &check;      |
@@ -40,7 +40,7 @@ Currently this library expects a few existing Collections in your System, see be
 
 ### etp_v1_1_wells
 
-| Column Name          | Column Type | Index   | Unique Index |
+| Column name          | Column type | Index   | Unique index |
 | -------------------- | ----------- | ------- | ------------ |
 | uid                  | string      |         |              |
 | uri                  | string      | &check; | &check;      |
@@ -51,17 +51,17 @@ Currently this library expects a few existing Collections in your System, see be
 | object_notifiable    | bool        |         |              |
 | channel_subscribable | bool        |         |              |
 
-## API Details
+## API details
 
-It is recommended to have an `etpHandler` or similiar Stream Service within your System that initializes the interacts with the `ETP_v1_1` library. Below details the different interfaces included with the `ETP_v1_1` library.
+An `etpHandler` or similar stream service is recommended to initialize the `ETP_v1_1` library's interactions. Below are details of the different interfaces included with the `ETP_v1_1` library.
 
-### Initializing Library
+### Initializing library
 
 ```javascript
 var etp = ETP_v1_1(etpOptions);
 ```
 
-The etpOptions object is an optional set of configuration options for the Library. Currently they are used specifically for configuring auto creation of a Log Dataobject on Streaming Data Start, see that section for details on the options that can be provided.
+The etpOptions object is an optional set of configuration options for the library. They are used specifically for configuring the auto-creation of a log data object on streaming data start. See that section for details on the options that can be provided.
 
 ### Connect
 
@@ -78,7 +78,7 @@ try {
 }
 ```
 
-You must call the above `Connect` function before using any other features documented below. If needed you can also add custom reconnect logic in the `onDisconnect` callback, the above example simply stops the stream service with the provided disconnect error.
+You must call the above `Connect` function before using any other features documented below. You can also add custom reconnect logic in the `onDisconnect` callback if needed. The above example stops the stream service with the provided disconnect error.
 
 ### Discovery
 
@@ -92,13 +92,13 @@ try {
 }
 ```
 
-After calling the `InitializeDiscovery` function with your preferred refresh interval the library will discover all Wells, Wellbores, and Logs that are available on the ETP server. This data will be inserted into the 3 Collections initially configured. In addition this data .will be automatically refreshed by the ETP library at the interval provided
+After calling the `InitializeDiscovery` function with your preferred refresh interval, the library will discover all wells, wellbores, and logs available on the ETP server. This data will be inserted into the three collections initially configured. In addition, this data will be automatically refreshed by the ETP library at the interval provided
 
-### Streaming Data
+### Streaming data
 
-There are 2 interfaces to start streaming data from a specific log, a function on the ETP library, as well as a direct MQTT interface
+There are two interfaces to start streaming data from a specific log, an ETP library function, and a direct MQTT interface.
 
-#### StartStreamForLogUri Function
+#### StartStreamForLogUri function
 
 ```javascript
 try {
@@ -116,14 +116,14 @@ try {
 }
 ```
 
-#### MQTT Interface
+#### MQTT interface
 
-To start stream data for a specific log, simply publish an MQTT message on the below request topic with the specificed structure. The library will publish a success/failed response on the response topic.
+To start stream data for a specific log, publish an MQTT message on the below request topic with the specified structure. The library will publish a success/failed response on the response topic.
 
-##### Request Structure
+##### Request structure
 
-MQTT Topic - `etp/stream/request`  
-Message Structure:
+MQTT topic: `etp/stream/request`  
+Message structure:
 
 ```json
 {
@@ -134,10 +134,10 @@ Message Structure:
 }
 ```
 
-##### Response Structure
+##### Response structure
 
-MQTT Topic - `etp/stream/response`  
-Message Structure:
+MQTT topic: `etp/stream/response`  
+Message structure:
 
 ```json
 {
@@ -146,21 +146,21 @@ Message Structure:
   "wellboreUid": "6174f133-cf99-40bf-a9b1-9ef7024ecf95",
   "command": "start",
   "error": false,
-  "reason: "" // will be included if error is true and include details on the failure
+  "reason: "" // will be included if the error is true and include failure details
 }
 ```
 
-#### Incoming ETP Streaming Data Structure
+#### Incoming ETP streaming data structure
 
-After successfully starting streaming data from a specified log, the library will publish all incoming data via MQTT. All mnomonics included in the log file will be in the MQTT message as well.
+After successfully starting streaming data from a specified log, the library will publish all incoming data via MQTT. All mnemonics included in the log file will also be in the MQTT message.
 
-The MQTT Topic structure will be:
+The MQTT topic structure will be:
 
 `etp/stream/incoming/<well_uid>/<wellbore_uid>/<log_uid>`
 
-Note that the `<well_uid>`, `<wellbore_uid>`, and `<log_uid>` in the above topic will be replaced with the actual UIDs. This configuration allows for a dedicated topic per data stream for processing as needed in your application.
+The `<well_uid>`, `<wellbore_uid>`, and `<log_uid>` in the above topic will be replaced with the actual UIDs. This configuration allows for a dedicated topic per data stream for processing as needed in your application.
 
-The MQTT Message structure will be:
+The MQTT message structure will be:
 
 ```json
 [
@@ -179,9 +179,9 @@ The MQTT Message structure will be:
 ]
 ```
 
-Note that it is possible that multiple timestamped messages can be included in a single MQTT message, so ensure your application handles this.
+It is possible that multiple timestamped messages can be included in a single MQTT message, so ensure your application handles this.
 
-### Creating Log DataObject
+### Creating log data object
 
 ```javascript
 try {
@@ -203,9 +203,9 @@ try {
 
 ```
 
-The above function call will create a Log DataObject with the specified configuration, multiple mnemonics can be provided via the array.
+The above function call will create a log data object with the specified configuration, and multiple mnemonics can be provided via the array.
 
-### Auto Creation of Log DataObject on Streaming Data Start
+### Auto-creation of log data object on streaming data start
 
 ```javascript
 const etpOptions = {
@@ -223,9 +223,9 @@ const etpOptions = {
 var etp = ETP_v1_1(etpOptions);
 ```
 
-You can enable auto log createion of a Log DataObject by providing the above options when initializing the ETP library. With these options set, then after successfully starting streaming data for a log, a new log will be created on the same well and wellbore, with the provided uid, name, and mnemonics.
+You can enable auto log creation of a log data object by providing the above options when initializing the ETP library. With these options set, then after successfully starting streaming data for a log, a new log will be created on the same well and wellbore, with the provided uid, name, and mnemonics.
 
-### Writing to a Log DataObject
+### Writing to a log data object
 
 ```javascript
 var wellUid = "asdf";
@@ -240,4 +240,4 @@ var dataToWrite = [
 etp.WriteLogDataToStore(wellUid, wellboreUid, logUid, dataToWrite);
 ```
 
-You can call the above function in order to write data to the specified log. You can write multiple mnemonics and timestamps at the same time via the dataToWrite array of objects.
+You can call the above function to write data to the specified log. You can write multiple mnemonics and timestamps at the same time via the dataToWrite array of objects.
